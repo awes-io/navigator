@@ -1,0 +1,56 @@
+{
+    "name": "awes-io/navigator",
+    "description": ":description",
+    "type": "library",
+    "license": "GPL-3.0-only",
+	"authors": [
+		{
+			"name": "Awescode GmbH",
+			"email": "info@awescode.de",
+			"homepage": "https://www.awescode.de",
+			"role": "Owner"
+		},
+		{
+			"name": "Alexander Osokin",
+			"email": "info@thealex.ru",
+			"homepage": "https://thealex.ru"
+		}
+	],
+	"support": {
+		"email": "support@awescode.de"
+	},
+	"homepage": "https://github.com/awes-io/navigator",
+	"keywords": ["Laravel", "Navigator"],
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "~7.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3.0",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AwesIO\\Navigator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AwesIO\\Navigator\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AwesIO\\Navigator\\NavigatorServiceProvider"
+            ],
+            "aliases": {
+                "Navigator": "AwesIO\\Navigator\\Facades\\Navigator"
+            }
+        }
+    }
+}
