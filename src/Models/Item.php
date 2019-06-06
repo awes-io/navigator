@@ -10,14 +10,6 @@ class Item implements IteratorAggregate
 {
     private $item;
 
-    private $link;
-
-    private $title;
-
-    private $children;
-
-    private $attr;
-
     public function __construct(Collection $item)
     {
         $this->item = $item;
@@ -27,7 +19,7 @@ class Item implements IteratorAggregate
 
     public function __get($prop)
     {
-        return $this->$prop;
+        return $this->$prop ?? null;
     }
 
     public function getIterator() 
@@ -42,12 +34,8 @@ class Item implements IteratorAggregate
 
     private function process($item)
     {
-        $this->link = $item->get(config('navigator.keys.link'));
-
-        $this->title = $item->get(config('navigator.keys.title'));
-
-        $this->children = $item->get(config('navigator.keys.children'));
-
-        $this->attr = $item->get(config('navigator.keys.attr'));
+        $this->item->each(function($prop, $key) {
+            $this->$key = $prop;
+        });
     }
 }

@@ -18,34 +18,39 @@ class NavigationProcessor
         $this->menu = $menu;
     }
 
-    public function build($closure)
+    public function build($closure): Menu
     {
-        $menu = $this->process($this->menu, $closure);
-
-        return new Menu($menu);
+        return new Menu($this->process($this->menu, $closure));
     }
 
     private function process($menu, $closure)
     {
-        $menu = $menu->sortBy(config('navigator.keys.order'))->values();
+        return $this->sortByOrder($menu)->map(function ($item) use ($closure) {
 
-        return $menu->map(function ($item) use ($closure) {
+                $item = $this->processChildren($item, $closure);
 
-            $item = $this->processChildren($item, $closure);
+                $this->processRoute($item);
 
-            $this->processRoute($item);
-
-            if (! is_null($closure)) {
-                $item = $closure($item);
+                if (! is_null($closure)) {
+                    $item = $closure($item);
+                }
+                return $item;
             }
-            return $item;
-        });
+        );
+    }
+
+    private function sortByOrder($menu)
+    {
+        return $menu->sortBy(config('navigator.keys.order'))->values();
     }
 
     private function processChildren($item, $closure)
     {
-        if ($child = optional($item)->get(config('navigator.keys.children'))) {
-            $item[config('navigator.keys.children')] = $this->process($child, $closure);
+        $children = optional($item)->get(config('navigator.keys.children'));
+
+        if ($children) {
+            $key = config('navigator.keys.children');
+            $item[$key] = $this->process($children, $closure);
         }
         return $item;
     }
