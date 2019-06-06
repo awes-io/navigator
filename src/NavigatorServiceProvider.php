@@ -28,20 +28,17 @@ class NavigatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Collection::macro('navigationWalk', function (callable $closure, $inside = false) {
+        Collection::macro('recursive', function () {
 
-            $sorted = $this->sortBy('order')->values();
+            return $this->map(function ($value) {
 
-            return $sorted->map(function ($item, $key) use ($closure) {
-
-                if (is_array($item) && $child = collect($item)->get('children')) {
-                    $item['children'] = collect($child)->navigationWalk($closure, true);
+                if (is_array($value) || is_object($value)) {
+                    return collect($value)->recursive();
                 }
-
-                return $item;
+        
+                return $value;
             });
         });
-
 
         $this->mergeConfigFrom(__DIR__.'/../config/navigator.php', 'navigator');
 

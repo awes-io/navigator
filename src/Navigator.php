@@ -2,14 +2,17 @@
 
 namespace AwesIO\Navigator;
 
+use Closure;
+use AwesIO\Navigator\Models\Menu;
+use AwesIO\Navigator\Services\NavigationProcessor;
 use AwesIO\Navigator\Contracts\Navigator as NavigatorContract;
 
 class Navigator implements NavigatorContract
 {
-
-    public function getMenu(array $menu)
+    public function buildMenu(array $menu, Closure $closure = null) :Menu
     {
-        return collect($menu)->navigationWalk(new ProcessNavigation());
-    }
+        $processor = new NavigationProcessor(collect($menu)->recursive());
 
+        return $processor->build($closure);
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace AwesIO\Navigator\Contracts;
 
+use Closure;
+
 interface Navigator
 {
-    public function getMenu(array $menu);
+    public function buildMenu(array $menu, Closure $closure = null);
 }
