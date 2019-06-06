@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Route;
 
 class NavigationProcessor
 {
-    /**
-     * @var Collection
-     */
     private $menu;
 
     public function __construct(Collection $menu)
@@ -27,16 +24,15 @@ class NavigationProcessor
     {
         return $this->sortByOrder($menu)->map(function ($item) use ($closure) {
 
-                $item = $this->processChildren($item, $closure);
+            $item = $this->processChildren($item, $closure);
 
-                $this->processRoute($item);
+            $this->processRoute($item);
 
-                if (! is_null($closure)) {
-                    $item = $closure($item);
-                }
-                return $item;
+            if (! is_null($closure)) {
+                $item = $closure($item);
             }
-        );
+            return $item;
+        });
     }
 
     private function sortByOrder($menu)

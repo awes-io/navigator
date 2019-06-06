@@ -18,12 +18,7 @@ class Menu implements MenuContract, IteratorAggregate
 
     public function getIterator() 
     {
-        return new ArrayIterator($this->toArray());
-    }
-
-    public function toArray()
-    {
-        return $this->menu->toArray();
+        return new ArrayIterator($this->menu->toArray());
     }
 
     private function process($menu)
