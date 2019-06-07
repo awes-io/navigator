@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Facade;
 class Navigator extends Facade
 {
     /**
+     * @codeCoverageIgnoreStart
      * Get the registered name of the component.
      *
      * @return string

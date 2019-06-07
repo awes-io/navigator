@@ -2,6 +2,7 @@
 
 namespace AwesIO\Navigator\Tests;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Schema\Blueprint;
 use AwesIO\Navigator\NavigatorServiceProvider;
 
@@ -32,6 +33,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             require dirname(dirname(__FILE__)) . '/tests/Stubs/navigation.php'
         );
 
+        $this->setUpRoutes();
+
         // $this->setUpDatabase($app);
     }
 
@@ -45,5 +48,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         return [
             NavigatorServiceProvider::class
         ];
+    }
+
+    protected function setUpRoutes(Type $var = null)
+    {
+        Route::get('/', function() {})->name('test');
+
+        Route::get('/protected', function() {})->middleware('can:view')->name('protected');
     }
 }

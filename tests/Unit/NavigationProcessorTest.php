@@ -2,6 +2,7 @@
 
 namespace AwesIO\Navigator\Tests\Unit;
 
+use AwesIO\Navigator\Contracts\Item;
 use AwesIO\Navigator\Contracts\Menu;
 use AwesIO\Navigator\Tests\TestCase;
 use AwesIO\Navigator\Services\NavigationProcessor;
@@ -36,5 +37,67 @@ class NavigationProcessorTest extends TestCase
         foreach ($menu as $item) {
             $this->assertTrue($item->b == $value);
         }
+    }
+
+    public function testSortsByOrder()
+    {
+        $order = config('navigator.keys.order');
+
+        $menu = (
+            new NavigationProcessor(
+                collect([[$order => 2],[$order => 0],[$order => 1],[$order => 3]])->recursive()
+            )
+        )->build();
+
+        foreach ($menu as $key => $item) {
+            $this->assertTrue($key === $item[$order]);
+        }
+    }
+
+    public function testProcessesChildren()
+    {
+        $children = config('navigator.keys.children');
+
+        $menu = $this->processor->build();
+
+        foreach ($menu as $item) {
+            $this->assertInstanceOf(Item::class, $item->$children->first());
+        }
+    }
+
+    public function testProcessesRoutes()
+    {
+        $route = config('navigator.keys.route');
+
+        $link = config('navigator.keys.link');
+
+        $menu = (
+            new NavigationProcessor(
+                collect([[$route => $name = 'test', $link => 1]])->recursive()
+            )
+        )->build();
+
+        foreach ($menu as $item) {
+            $this->assertEquals($name, $item[$route]);
+            $this->assertEquals(route($name), $item[$link]);
+        }
+    }
+
+    public function testExcludeProtectedRoutes()
+    {
+        $route = config('navigator.keys.route');
+
+        $link = config('navigator.keys.link');
+
+        $menu = (
+            new NavigationProcessor(
+                collect([
+                    [$route => 'test', $link => 1],
+                    [$route => 'protected', $link => 1]
+                ])->recursive()
+            )
+        )->build();
+
+        $this->assertCount(1, $menu);
     }
 }
