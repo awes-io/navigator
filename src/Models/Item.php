@@ -18,4 +18,9 @@ class Item implements ItemContract
     {
         return $this->$prop ?? null;
     }
+
+    public function hasChildren(): bool
+    {
+        return (bool) optional($this->children)->isNotEmpty();
+    }
 }

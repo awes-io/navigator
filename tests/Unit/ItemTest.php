@@ -17,4 +17,22 @@ class ItemTest extends TestCase
 
         $this->assertEquals(null, $item->unknown);
     }
+
+    public function testDoesntHaveChildren()
+    {
+        $item = new Item(collect([]));
+
+        $this->assertFalse($item->hasChildren());
+
+        $item = new Item(collect(['children' => collect([])]));
+
+        $this->assertFalse($item->hasChildren());
+    }
+
+    public function testHasChildren()
+    {
+        $item = new Item(collect(['children' => collect([1])]));
+
+        $this->assertTrue($item->hasChildren());
+    }
 }
