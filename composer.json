@@ -46,7 +46,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --colors=always"
+        "test": "vendor/bin/phpunit --colors=always --configuration phpunit.xml.dist --debug"
     },
     "extra": {
         "laravel": {
