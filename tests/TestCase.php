@@ -25,7 +25,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        // $app['config']->set('app.debug', env('APP_DEBUG', true));
+        $app['config']->set('app.debug', env('APP_DEBUG', true));
+
+        $app['config']->set(
+            'navigator.tests', 
+            require dirname(dirname(__FILE__)) . '/tests/Stubs/navigation.php'
+        );
 
         // $this->setUpDatabase($app);
     }

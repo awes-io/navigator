@@ -17,7 +17,7 @@ class NavigationProcessor
         $this->menu = $menu;
     }
 
-    public function build($closure): Menu
+    public function build($closure = null): Menu
     {
         return new Menu($this->process($this->menu, $closure));
     }
