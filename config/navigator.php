@@ -23,7 +23,6 @@ return [
                     'title' => 'Menu 2',
                     'link' => 'test',
                     'order' => 2,
-                    'route' => 'register',
                     'attr' => [
                         'link' => 'test',
                         'class' => 'some class'
@@ -31,7 +30,8 @@ return [
                 ],[
                     'title' => 'Menu 3',
                     'link' => 'test 3',
-                    'order' => 1
+                    'order' => 1,
+                    'route' => 'test'
                 ]
             ]
         ],
@@ -46,6 +46,7 @@ return [
                 ],[
                     'title' => 'Menu 6',
                     'link' => 'test',
+                    'route' => 'test',
                     'children' => [
                         [
                             'title' => 'Menu 7',
@@ -53,7 +54,8 @@ return [
                             'route' => 'unknown',
                         ],[
                             'title' => 'Menu 8',
-                            'link' => 'test'
+                            'link' => 'test',
+                            'route' => 'register',
                         ]
                     ]
                 ]

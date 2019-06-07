@@ -2,9 +2,11 @@
 
 namespace AwesIO\Navigator\Services;
 
+use Illuminate\Support\Str;
 use AwesIO\Navigator\Models\Menu;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Contracts\Auth\Access\Gate;
 
 class NavigationProcessor
 {
@@ -24,15 +26,17 @@ class NavigationProcessor
     {
         return $this->sortByOrder($menu)->map(function ($item) use ($closure) {
 
-            $item = $this->processChildren($item, $closure);
-
-            $this->processRoute($item);
-
-            if (! is_null($closure)) {
-                $item = $closure($item);
+            if (! $this->processRoute($item)) {
+                return null;
             }
+
+            $this->processChildren($item, $closure);
+
+            if (! is_null($closure)) $closure($item);
+
             return $item;
-        });
+
+        })->filter();
     }
 
     private function sortByOrder($menu)
@@ -48,7 +52,6 @@ class NavigationProcessor
             $key = config('navigator.keys.children');
             $item[$key] = $this->process($children, $closure);
         }
-        return $item;
     }
 
     private function processRoute($item)
@@ -57,6 +60,25 @@ class NavigationProcessor
 
         if ($route && Route::has($route)) {
             $item->put(config('navigator.keys.link'), route($route));
+            return $this->routeAllowed($route);
         }
+        return true;
+    }
+
+    private function routeAllowed($route)
+    {
+        $middlewares = collect(Route::getRoutes()->getByName($route)->gatherMiddleware());
+
+        $middlewares = $middlewares->filter(function ($value) {
+            return preg_match('/can:/', $value);
+        });
+
+        return $middlewares->map(function($value) {
+            $data = Str::after($value, 'can:');
+            $abilities = explode(',', $data);
+            return app(Gate::class)->allows(head($abilities), last($abilities));
+        })->every(function($value) {
+            return $value;
+        });
     }
 }
