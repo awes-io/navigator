@@ -24,4 +24,17 @@ class NavigationProcessorTest extends TestCase
     {
         $this->assertInstanceOf(Menu::class, $this->processor->build());
     }
+
+    public function testAcceptsAndAppliesClosure()
+    {
+        $value = uniqid();
+
+        $menu = $this->processor->build(function($item) use ($value) {
+            $item['b'] = $value;
+        });
+
+        foreach ($menu as $item) {
+            $this->assertTrue($item->b == $value);
+        }
+    }
 }
