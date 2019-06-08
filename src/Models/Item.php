@@ -23,4 +23,14 @@ class Item implements ItemContract
     {
         return (bool) optional($this->children)->isNotEmpty();
     }
+
+    public function children(): Collection
+    {
+        return $this->children;
+    }
+
+    public function link(): string
+    {
+        return $this->link;
+    }
 }

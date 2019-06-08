@@ -3,6 +3,7 @@
 namespace AwesIO\Navigator\Tests\Unit;
 
 use AwesIO\Navigator\Models\Item;
+use Illuminate\Support\Collection;
 use AwesIO\Navigator\Tests\TestCase;
 
 class ItemTest extends TestCase
@@ -34,5 +35,21 @@ class ItemTest extends TestCase
         $item = new Item(collect(['children' => collect([1])]));
 
         $this->assertTrue($item->hasChildren());
+    }
+
+    public function testReturnsChildren()
+    {
+        $item = new Item(collect(['children' => collect([$value = uniqid()])]));
+
+        $this->assertInstanceOf(Collection::class, $item->children());
+
+        $this->assertEquals($value, $item->children()->first());
+    }
+
+    public function testReturnsLink()
+    {
+        $item = new Item(collect(['link' => $link = uniqid()]));
+
+        $this->assertEquals($link, $item->link());
     }
 }
