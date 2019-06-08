@@ -3,7 +3,7 @@
 namespace AwesIO\Navigator\Tests\Unit;
 
 use AwesIO\Navigator\Navigator;
-use AwesIO\Navigator\Contracts\Menu;
+use AwesIO\Navigator\Contracts\Item;
 use AwesIO\Navigator\Tests\TestCase;
 
 class NavigatorTest extends TestCase
@@ -12,7 +12,7 @@ class NavigatorTest extends TestCase
     {
         $menu = (new Navigator())->buildMenu(config('navigator.tests.menu'));
 
-        $this->assertInstanceOf(Menu::class, $menu);
+        $this->assertInstanceOf(Item::class, $menu);
     }
 
     public function testAcceptsAndAppliesClosure()

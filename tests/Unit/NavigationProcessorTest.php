@@ -3,7 +3,6 @@
 namespace AwesIO\Navigator\Tests\Unit;
 
 use AwesIO\Navigator\Contracts\Item;
-use AwesIO\Navigator\Contracts\Menu;
 use AwesIO\Navigator\Tests\TestCase;
 use AwesIO\Navigator\Services\NavigationProcessor;
 
@@ -23,7 +22,7 @@ class NavigationProcessorTest extends TestCase
 
     public function testReturnsMenuInstance()
     {
-        $this->assertInstanceOf(Menu::class, $this->processor->build());
+        $this->assertInstanceOf(Item::class, $this->processor->build());
     }
 
     public function testAcceptsAndAppliesClosure()

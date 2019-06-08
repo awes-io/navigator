@@ -3,7 +3,7 @@
 namespace AwesIO\Navigator\Services;
 
 use Illuminate\Support\Str;
-use AwesIO\Navigator\Models\Menu;
+use AwesIO\Navigator\Models\Item;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -17,9 +17,13 @@ class NavigationProcessor
         $this->menu = $menu;
     }
 
-    public function build($closure = null): Menu
+    public function build($closure = null): Item
     {
-        return new Menu($this->process($this->menu, $closure));
+        $menu = $this->process($this->menu, $closure);
+
+        return new Item(collect([
+            config('navigator.keys.children') => $this->rebuild($menu)
+        ]));
     }
 
     private function process($menu, $closure)
@@ -79,6 +83,19 @@ class NavigationProcessor
             return app(Gate::class)->allows(head($abilities), last($abilities));
         })->every(function($value) {
             return $value;
+        });
+    }
+
+    private function rebuild($menu)
+    {
+        if (! $menu instanceOf Collection) return $menu;
+
+        return $menu->map(function($item) {
+            
+            if (optional($item)->has(config('navigator.keys.title'))) {
+                return new Item($this->rebuild($item));
+            }
+            return $this->rebuild($item);
         });
     }
 }
