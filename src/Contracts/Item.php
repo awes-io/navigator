@@ -13,4 +13,6 @@ interface Item
     public function children(): Collection;
 
     public function link(): string;
+
+    public function isActive(): bool;
 }

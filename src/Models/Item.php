@@ -5,15 +5,22 @@ namespace AwesIO\Navigator\Models;
 use ArrayIterator;
 use IteratorAggregate;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Request;
 use AwesIO\Navigator\Contracts\Item as ItemContract;
 
 class Item implements ItemContract, IteratorAggregate
 {
+    private $active = false;
+
     public function __construct(Collection $item)
     {
+        $this->id = uniqid("", true);
+        
         $item->each(function($prop, $key) {
             $this->$key = $prop;
         });
+
+        $this->markAsActive();
     }
 
     public function getIterator() 
@@ -45,5 +52,22 @@ class Item implements ItemContract, IteratorAggregate
     public function link(): string
     {
         return $this->link;
+    }
+
+    public function isActive(): bool
+    {
+        return (bool) $this->active;
+    }
+
+    private function markAsActive()
+    {
+        $key = config('navigator.keys.link');
+
+        $path = trim(parse_url($this->{$key}, PHP_URL_PATH), '/') ?:
+            ($this->{$key} ? '/' : null);
+
+        if (Request::is($path)) {
+            $this->active = true;
+        }
     }
 }

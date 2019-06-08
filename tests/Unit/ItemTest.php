@@ -52,4 +52,19 @@ class ItemTest extends TestCase
 
         $this->assertEquals($link, $item->link());
     }
+
+    public function testReturnsIfIsActive()
+    {
+        $item = new Item(collect([]));
+
+        $this->assertFalse($item->isActive());
+
+        $item = new Item(collect(['active' => false]));
+
+        $this->assertFalse($item->isActive());
+
+        $item = new Item(collect(['active' => true]));
+
+        $this->assertTrue($item->isActive());
+    }
 }

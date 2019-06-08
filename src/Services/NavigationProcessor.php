@@ -55,7 +55,7 @@ class NavigationProcessor
 
     private function sortByOrder(Collection $menu)
     {
-        return $menu->sortBy(config('navigator.keys.order'));
+        return $menu->sortBy(config('navigator.keys.order'))->values();
     }
 
     private function getRouteName(Collection $item)
