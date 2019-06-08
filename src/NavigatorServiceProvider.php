@@ -45,5 +45,17 @@ class NavigatorServiceProvider extends ServiceProvider
         $this->app->bind(NavigatorContract::class, Navigator::class);
 
         $this->app->singleton('navigator', NavigatorContract::class);
+
+        $this->registerHelpers();
+    }
+
+    /**
+     * Register helpers file
+     */
+    public function registerHelpers()
+    {
+        if (file_exists($file = __DIR__ . '/helpers.php')) {
+            require $file;
+        }
     }
 }
