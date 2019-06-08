@@ -13,6 +13,6 @@ class Navigator implements NavigatorContract
     {
         $processor = new NavigationProcessor(collect($menu)->recursive());
 
-        return $processor->build($closure);
+        return $processor->setPostProcessor($closure)->build();
     }
 }

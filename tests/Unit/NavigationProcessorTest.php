@@ -29,9 +29,9 @@ class NavigationProcessorTest extends TestCase
     {
         $value = uniqid();
 
-        $menu = $this->processor->build(function($item) use ($value) {
+        $menu = $this->processor->setPostProcessor(function($item) use ($value) {
             $item['b'] = $value;
-        });
+        })->build();
 
         foreach ($menu as $item) {
             $this->assertTrue($item->b == $value);

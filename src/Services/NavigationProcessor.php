@@ -2,100 +2,101 @@
 
 namespace AwesIO\Navigator\Services;
 
-use Illuminate\Support\Str;
 use AwesIO\Navigator\Models\Item;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Contracts\Auth\Access\Gate;
+use AwesIO\Navigator\Services\Traits\ValidatesRoutes;
 
 class NavigationProcessor
 {
+    use ValidatesRoutes;
+
     private $menu;
+
+    private $closure;
 
     public function __construct(Collection $menu)
     {
         $this->menu = $menu;
     }
 
-    public function build($closure = null): Item
+    public function setPostProcessor($closure): self
     {
-        $menu = $this->process($this->menu, $closure);
+        $this->closure = $closure;
 
-        return new Item(collect([
-            config('navigator.keys.children') => $this->rebuild($menu)
-        ]));
+        return $this;
     }
 
-    private function process($menu, $closure)
+    public function build(): Item
     {
-        return $this->sortByOrder($menu)->map(function ($item) use ($closure) {
+        $key = config('navigator.keys.children');
 
-            if (! $this->processRoute($item)) {
-                return null;
-            }
+        $menu = collect([
+             $key => $this->process($this->menu)
+        ]);
 
-            $this->processChildren($item, $closure);
+        return new Item($menu);
+    }
 
-            if (! is_null($closure)) $closure($item);
+    private function process($menu): Collection
+    {
+        return $this->sortByOrder($menu)->map(function ($item) {
 
-            return $item;
+            if (! $this->processRoute($item)) return null;
+
+            $this->processChildren($item);
+
+            $this->applyPostProcessing($item);
+
+            return $this->wrapItem($item);
 
         })->filter();
     }
 
-    private function sortByOrder($menu)
+    private function sortByOrder(Collection $menu)
     {
         return $menu->sortBy(config('navigator.keys.order'))->values();
     }
 
-    private function processChildren($item, $closure)
+    private function getRouteName(Collection $item)
     {
-        $children = optional($item)->get(config('navigator.keys.children'));
-
-        if ($children) {
-            $key = config('navigator.keys.children');
-            $item[$key] = $this->process($children, $closure);
-        }
+        return optional($item)->get(config('navigator.keys.route'));
     }
 
     private function processRoute($item)
     {
-        $route = optional($item)->get(config('navigator.keys.route'));
+        $routeName = $this->getRouteName($item);
 
-        if ($route && Route::has($route)) {
-            $item->put(config('navigator.keys.link'), route($route));
-            return $this->isAllowedRoute($route);
+        if (! $this->isAllowedRoute($routeName)) {
+            return false;
+        }
+
+        if (Route::has($routeName)) {
+            $item->put(config('navigator.keys.link'), route($routeName));
         }
         return true;
     }
 
-    private function isAllowedRoute($route)
+    private function processChildren($item)
     {
-        $middlewares = collect(Route::getRoutes()->getByName($route)->gatherMiddleware());
+        $key = config('navigator.keys.children');
 
-        $middlewares = $middlewares->filter(function ($value) {
-            return preg_match('/can:/', $value);
-        });
+        $children = optional($item)->get($key);
 
-        return $middlewares->map(function($value) {
-            $data = Str::after($value, 'can:');
-            $abilities = explode(',', $data);
-            return app(Gate::class)->allows(head($abilities), last($abilities));
-        })->every(function($value) {
-            return $value;
-        });
+        if ($children) {
+            $item[$key] = $this->process($children);
+        }
     }
 
-    private function rebuild($menu)
+    private function applyPostProcessing($item)
     {
-        if (! $menu instanceOf Collection) return $menu;
+        if (! is_null($closure = $this->closure)) $closure($item);
+    }
 
-        return $menu->map(function($item) {
-            
-            if (optional($item)->has(config('navigator.keys.title'))) {
-                return new Item($this->rebuild($item));
-            }
-            return $this->rebuild($item);
-        });
+    private function wrapItem($item)
+    {
+        $key = config('navigator.keys.title');
+
+        return optional($item)->has($key) ? new Item($item) : $item;
     }
 }
