@@ -18,7 +18,11 @@ class Item implements ItemContract, IteratorAggregate
 
     public function getIterator() 
     {
-        return new ArrayIterator(optional($this->{config('navigator.keys.children')})->toArray());
+        return new ArrayIterator(
+            optional(
+                $this->{config('navigator.keys.children')}
+            )->toArray()
+        );
     }
 
     public function __get($prop)
@@ -28,7 +32,9 @@ class Item implements ItemContract, IteratorAggregate
 
     public function hasChildren(): bool
     {
-        return (bool) optional($this->{config('navigator.keys.children')})->isNotEmpty();
+        return (bool) optional(
+            $this->{config('navigator.keys.children')}
+        )->isNotEmpty();
     }
 
     public function children(): Collection

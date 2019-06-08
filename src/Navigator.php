@@ -3,7 +3,6 @@
 namespace AwesIO\Navigator;
 
 use Closure;
-use AwesIO\Navigator\Models\Menu;
 use AwesIO\Navigator\Contracts\Item;
 use AwesIO\Navigator\Services\NavigationProcessor;
 use AwesIO\Navigator\Contracts\Navigator as NavigatorContract;

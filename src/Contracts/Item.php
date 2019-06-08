@@ -9,4 +9,8 @@ interface Item
     public function __construct(Collection $item);
 
     public function hasChildren(): bool;
+
+    public function children(): Collection;
+
+    public function link(): string;
 }

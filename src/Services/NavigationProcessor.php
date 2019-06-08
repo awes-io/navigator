@@ -64,12 +64,12 @@ class NavigationProcessor
 
         if ($route && Route::has($route)) {
             $item->put(config('navigator.keys.link'), route($route));
-            return $this->routeAllowed($route);
+            return $this->isAllowedRoute($route);
         }
         return true;
     }
 
-    private function routeAllowed($route)
+    private function isAllowedRoute($route)
     {
         $middlewares = collect(Route::getRoutes()->getByName($route)->gatherMiddleware());
 
