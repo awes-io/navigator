@@ -32,6 +32,36 @@ $menu = Navigator::buildMenu(config('navigation.menu'), function ($item) {
 });
 ```
 
+## Rendering
+
+```php
+$menu = Navigator::buildMenu(config('navigation.menu'));
+return view('view', compact('menu'));
+
+// view.blade.php
+@extends('main')
+
+@section('content')
+    @include('menu', ['menu' => $menu])
+@endsection
+
+// menu.blade.php
+@foreach($menu as $item)
+  <ul>
+    <li>
+        @if($item->link())
+            <a href="{{$item->link()}}">{{$item->title}}</a>
+        @else
+            {{$item->title}}
+        @endif
+    </li>
+    @if($item->hasChildren())
+       @include('menu', ['menu' => $item->children()])
+    @endif
+  </ul>
+@endforeach
+```
+
 ## Testing
 
 You can run the tests with:
