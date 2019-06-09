@@ -67,4 +67,80 @@ class ItemTest extends TestCase
 
         $this->assertTrue($item->isActive());
     }
+
+    public function testReturnsActiveItem()
+    {
+        $item = new Item(collect([ 
+            'children' => collect([
+                new Item(collect(['active' => false])),
+                new Item(collect(['active' => true, 'title' => $title = uniqid(), 
+                    'children' => collect([
+                        new Item(collect(['active' => false]))
+                    ])
+                ]))
+            ])
+        ]));
+
+        $this->assertEquals($title, $item->getActive()->title);
+
+        $item = new Item(collect([ 
+            'children' => collect([
+                new Item(collect(['active' => false])),
+                new Item(collect(['children' => collect([
+                    new Item(collect(['active' => true, 'title' => $title = uniqid()]))
+                ])]))
+            ])
+        ]));
+
+        $this->assertEquals($title, $item->getActive()->title);
+
+        $item = new Item(collect([ 
+            'children' => collect([
+                new Item(collect(['active' => true, 'title' => $title = uniqid()])),
+                new Item(collect(['children' => collect([
+                    new Item(collect(['active' => false]))
+                ])]))
+            ])
+        ]));
+
+        $this->assertEquals($title, $item->getActive()->title);
+    }
+
+    public function testReturnsActiveItemId()
+    {
+        $item = new Item(collect([ 
+            'children' => collect([
+                new Item(collect(['active' => false])),
+                new Item(collect(['active' => true, 'title' => $title = uniqid(), 'id' => $id = uniqid(), 
+                    'children' => collect([
+                        new Item(collect(['active' => false]))
+                    ])
+                ]))
+            ])
+        ]));
+
+        $this->assertEquals($id, $item->getActiveId());
+
+        $item = new Item(collect([ 
+            'children' => collect([
+                new Item(collect(['active' => false])),
+                new Item(collect(['children' => collect([
+                    new Item(collect(['active' => true, 'title' => $title = uniqid(), 'id' => $id = uniqid()]))
+                ])]))
+            ])
+        ]));
+
+        $this->assertEquals($id, $item->getActiveId());
+
+        $item = new Item(collect([ 
+            'children' => collect([
+                new Item(collect(['active' => true, 'title' => $title = uniqid(), 'id' => $id = uniqid()])),
+                new Item(collect(['children' => collect([
+                    new Item(collect(['active' => false]))
+                ])]))
+            ])
+        ]));
+
+        $this->assertEquals($id, $item->getActiveId());
+    }
 }

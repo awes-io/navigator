@@ -10,6 +10,8 @@ use AwesIO\Navigator\Contracts\Item as ItemContract;
 
 class Item implements ItemContract, IteratorAggregate
 {
+    private $id;
+    
     private $active = false;
 
     public function __construct(Collection $item)
@@ -26,9 +28,7 @@ class Item implements ItemContract, IteratorAggregate
     public function getIterator() 
     {
         return new ArrayIterator(
-            optional(
-                $this->{config('navigator.keys.children')}
-            )->toArray()
+            optional($this->children())->toArray()
         );
     }
 
@@ -39,24 +39,34 @@ class Item implements ItemContract, IteratorAggregate
 
     public function hasChildren(): bool
     {
-        return (bool) optional(
-            $this->{config('navigator.keys.children')}
-        )->isNotEmpty();
+        return (bool) optional($this->children())->isNotEmpty();
     }
 
-    public function children(): Collection
+    public function children()
     {
         return $this->{config('navigator.keys.children')};
     }
 
-    public function link(): string
+    public function link()
     {
-        return $this->link;
+        return $this->{config('navigator.keys.link')};
     }
 
     public function isActive(): bool
     {
         return (bool) $this->active;
+    }
+
+    public function getActiveId()
+    {
+        return optional($this->getActive())->id;
+    }
+
+    public function getActive()
+    {
+        $this->find($this, $name = 'active', true);
+
+        return $this->{$this->propName($name)};
     }
 
     private function markAsActive()
@@ -68,9 +78,27 @@ class Item implements ItemContract, IteratorAggregate
 
     private function getPath()
     {
-        $key = config('navigator.keys.link');
+        return trim(parse_url($this->link(), PHP_URL_PATH), '/') ?:
+            ($this->link() ? '/' : null);
+    }
 
-        return trim(parse_url($this->{$key}, PHP_URL_PATH), '/') ?:
-            ($this->{$key} ? '/' : null);
+    private function find($item, $key, $value)
+    {
+        if ($item->$key == $value) {
+
+            $this->{$this->propName($key)} = $item;
+        }
+
+        if ($item->hasChildren())
+        {
+            return $item->children()->each(function($child) use ($key, $value) {
+                $this->find($child, $key, $value);
+            });
+        }
+    }
+
+    private function propName($key)
+    {
+        return '_'.$key.'Item';
     }
 }

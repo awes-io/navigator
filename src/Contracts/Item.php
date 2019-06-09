@@ -10,9 +10,13 @@ interface Item
 
     public function hasChildren(): bool;
 
-    public function children(): Collection;
+    public function children();
 
-    public function link(): string;
+    public function link();
 
     public function isActive(): bool;
+
+    public function getActiveId();
+
+    public function getActive();
 }
