@@ -61,13 +61,16 @@ class Item implements ItemContract, IteratorAggregate
 
     private function markAsActive()
     {
-        $key = config('navigator.keys.link');
-
-        $path = trim(parse_url($this->{$key}, PHP_URL_PATH), '/') ?:
-            ($this->{$key} ? '/' : null);
-
-        if (Request::is($path)) {
+        if (Request::is($this->getPath())) {
             $this->active = true;
         }
+    }
+
+    private function getPath()
+    {
+        $key = config('navigator.keys.link');
+
+        return trim(parse_url($this->{$key}, PHP_URL_PATH), '/') ?:
+            ($this->{$key} ? '/' : null);
     }
 }
