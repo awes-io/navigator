@@ -6,5 +6,5 @@ use Closure;
 
 interface Navigator
 {
-    public function buildMenu(array $menu, Closure $closure = null);
+    public function buildMenu(array $menu, array $mappings = [], Closure $closure = null) :Item;
 }

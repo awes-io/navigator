@@ -19,4 +19,6 @@ interface Item
     public function getActiveId();
 
     public function getActive();
+
+    public function findById($id);
 }

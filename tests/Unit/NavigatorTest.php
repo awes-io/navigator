@@ -19,7 +19,7 @@ class NavigatorTest extends TestCase
     {
         $value = uniqid();
 
-        $menu = (new Navigator())->buildMenu([[], []], function($item) use ($value) {
+        $menu = (new Navigator())->buildMenu([[], []], [], function($item) use ($value) {
             $item['a'] = $value;
         });
 

@@ -9,8 +9,10 @@ use AwesIO\Navigator\Contracts\Navigator as NavigatorContract;
 
 class Navigator implements NavigatorContract
 {
-    public function buildMenu(array $menu, Closure $closure = null) :Item
+    public function buildMenu(array $menu, array $mappings = [], Closure $closure = null) :Item
     {
+        config(['navigator.keys' => array_merge(config('navigator.keys'), $mappings)]);
+
         $processor = new NavigationProcessor(collect($menu)->recursive());
 
         return $processor->setPostProcessor($closure)->build();
