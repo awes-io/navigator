@@ -11,7 +11,7 @@ use AwesIO\Navigator\Contracts\Item as ItemContract;
 class Item implements ItemContract, IteratorAggregate
 {
     private $id;
-    
+
     private $active = false;
 
     public function __construct(Collection $item)
@@ -64,9 +64,16 @@ class Item implements ItemContract, IteratorAggregate
 
     public function getActive()
     {
-        $this->find($this, $name = 'active', true);
+        $this->find($this, $key = 'active', true);
 
-        return $this->{$this->propName($name)};
+        return $this->{$this->propName($key)};
+    }
+
+    public function findById($id)
+    {
+        $this->find($this, $key = 'id', $id);
+
+        return $this->{$this->propName($key)};
     }
 
     private function markAsActive()
@@ -85,7 +92,6 @@ class Item implements ItemContract, IteratorAggregate
     private function find($item, $key, $value)
     {
         if ($item->$key == $value) {
-
             $this->{$this->propName($key)} = $item;
         }
 
