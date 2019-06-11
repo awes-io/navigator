@@ -106,13 +106,13 @@ And use alternative menu settings for parsing and rendering:
 Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
 ```
 
-You achieve same effect dynamically, via mappings mentioned above:
+You can achieve same effect dynamically, via mappings mentioned above:
 
 ```php
 $menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
 ```
 
-Note that you can also use global helper method `buildMenu()`.
+Note that we now use global helper method `buildMenu()`.
 
 ### Some helpful methods are available
 
