@@ -31,6 +31,7 @@ return [
             'title' => 'Menu 4',
             'link' => 'test',
             'order' => 1,
+            'depth' => 1,
             'children' => 
             [
                 [
