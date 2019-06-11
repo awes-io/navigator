@@ -32,24 +32,30 @@ class NavigationProcessor
         $key = config('navigator.keys.children');
 
         $menu = collect([
-             $key => $this->process($this->menu)
+             $key => $this->process($this->menu, 10)
         ]);
 
         return new Item($menu);
     }
 
-    private function process($menu): Collection
+    private function process($menu, $depth): Collection
     {
-        return $this->sortByOrder($menu)->map(function ($item) {
+        return $this->sortByOrder($menu)->map(function ($item) use ($depth) {
 
-            if (! $this->processRoute($item)) return null;
+            $depth = $item->get(config('navigator.keys.depth')) ?? $depth;
 
-            $this->processChildren($item);
+            if ($depth >= 0) {
 
-            $this->applyPostProcessing($item);
+                if (! $this->processRoute($item)) return null;
 
-            return $this->wrapItem($item);
+                $this->processChildren($item, $depth - 1);
 
+                $this->applyPostProcessing($item);
+
+                return $this->wrapItem($item);
+            } else {
+                return null;
+            }
         })->filter();
     }
 
@@ -77,14 +83,14 @@ class NavigationProcessor
         return true;
     }
 
-    private function processChildren($item)
+    private function processChildren($item, $depth)
     {
         $key = config('navigator.keys.children');
 
         $children = optional($item)->get($key);
 
         if ($children) {
-            $item[$key] = $this->process($children);
+            $item[$key] = $this->process($children, $depth);
         }
     }
 
