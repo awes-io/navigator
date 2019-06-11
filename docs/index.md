@@ -1,9 +1,6 @@
 # Navigator
 
-[![Coverage report](http://gitlab.awescode.com/awes-io/navigator/badges/master/coverage.svg)](https://www.awes.io/)
-[![Build status](http://gitlab.awescode.com/awes-io/navigator/badges/master/build.svg)](https://www.awes.io/)
-
-Laravel package which can easily create a navigation menu of any complexity, with support for user permissions when displayed. Take a look at [contributing.md](contributing.md) to see a to do list.
+Laravel package which can easily create a navigation menu of any complexity, with support for user permissions when displayed.
 
 ## Installation
 
@@ -14,6 +11,12 @@ $ composer require awes-io/navigator
 ```
 
 The package will automatically register itself.
+
+You can publish the config file with:
+
+```bash
+php artisan vendor:publish --provider="AwesIO\Navigator\Providers\NavigatorServiceProvider" --tag="config"
+```
 
 ## Usage
 
@@ -59,14 +62,6 @@ return [
 ```
 
 Second one is mappings for configuration parameters (described below), third is a callback, which will be applied to each menu item.
-
-## Configuration
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
-```
 
 ### Some helpful methods are available
 
@@ -139,21 +134,3 @@ You can run the tests with:
 ```bash
 composer test
 ```
-
-## Contributing
-
-Please see [contributing.md](contributing.md) for details and a todolist.
-
-## Security
-
-If you discover any security related issues, please email :author_email instead of using the issue tracker.
-
-## Credits
-
-- [Alexander Osokin](https://thealex.ru)
-- [Galymzhan Begimov](https://github.com/begimov)
-- [All Contributors][link-contributors]
-
-## License
-
-[MIT](http://opensource.org/licenses/MIT)
