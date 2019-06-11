@@ -68,6 +68,52 @@ You can publish the config file with:
 php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
 ```
 
+You can rename any menu options keys:
+
+```php
+// navigator.php config
+'keys' => [
+    'depth' => 'depth', // depth of children quering
+    'order' => 'order', // ordering by parameter
+    'children' => 'children', // sub menu items
+    'route' => 'route', // route name
+    'link' => 'link', // item link url
+    'title' => 'title', // item title
+    'attr' => 'attr', // additional item attributes
+],
+```
+
+And use alternative menu settings for parsing and rendering:
+
+```php
+// navigator.php config
+'keys' => [
+    ...
+    'children' => 'other-children', // sub menu items
+    ...
+],
+
+// navigation.php
+'menu' => [
+    [
+        ...
+        'children' => [
+        ...
+        'other-children' => [
+        ...
+]
+
+Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
+```
+
+You achieve same effect dynamically, via mappings mentioned above:
+
+```php
+$menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
+```
+
+Note that you can also use global helper method `buildMenu()`.
+
 ### Some helpful methods are available
 
 Determine if node has any children and retrieve them:

@@ -12,12 +12,6 @@ $ composer require awes-io/navigator
 
 The package will automatically register itself.
 
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --provider="AwesIO\Navigator\Providers\NavigatorServiceProvider" --tag="config"
-```
-
 ## Usage
 
 ```php
@@ -62,6 +56,60 @@ return [
 ```
 
 Second one is mappings for configuration parameters (described below), third is a callback, which will be applied to each menu item.
+
+## Configuration
+
+You can publish the config file with:
+
+```bash
+php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
+```
+
+You can rename any menu options keys:
+
+```php
+// navigator.php config
+'keys' => [
+    'depth' => 'depth', // depth of children quering
+    'order' => 'order', // ordering by parameter
+    'children' => 'children', // sub menu items
+    'route' => 'route', // route name
+    'link' => 'link', // item link url
+    'title' => 'title', // item title
+    'attr' => 'attr', // additional item attributes
+],
+```
+
+And use alternative menu settings for parsing and rendering:
+
+```php
+// navigator.php config
+'keys' => [
+    ...
+    'children' => 'other-children', // sub menu items
+    ...
+],
+
+// navigation.php
+'menu' => [
+    [
+        ...
+        'children' => [
+        ...
+        'other-children' => [
+        ...
+]
+
+Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
+```
+
+You achieve same effect dynamically, via mappings mentioned above:
+
+```php
+$menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
+```
+
+Note that you can also use global helper method `buildMenu()`.
 
 ### Some helpful methods are available
 
