@@ -18,7 +18,7 @@ interface Item
 
     public function getActiveId();
 
-    public function getActive();
+    public function getActive(array $mappings = []);
 
     public function findById($id);
 }

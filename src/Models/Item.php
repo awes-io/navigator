@@ -12,7 +12,7 @@ class Item implements ItemContract, IteratorAggregate
 {
     private $id;
 
-    private $active = false;
+    public $active = false;
 
     public function __construct(Collection $item)
     {
@@ -62,9 +62,13 @@ class Item implements ItemContract, IteratorAggregate
         return optional($this->getActive())->id;
     }
 
-    public function getActive()
+    public function getActive(array $mappings = [])
     {
         $this->find($this, $key = 'active', true);
+
+        if (! empty($mappings)) {
+            config(['navigator.keys' => array_merge(config('navigator.keys'), $mappings)]);
+        }
 
         return $this->{$this->propName($key)};
     }
