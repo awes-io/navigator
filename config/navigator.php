@@ -8,7 +8,7 @@ return [
         'children' => 'children', // sub menu items
         'route' => 'route', // route name
         'link' => 'link', // item link url
-        'title' => 'title', // item title
+        'title' => 'name', // item title
         'attr' => 'attr', // additional item attributes
     ],
 

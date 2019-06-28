@@ -27,22 +27,22 @@ class NavigationProcessor
         return $this;
     }
 
-    public function build(): Item
+    public function build(array $config = []): Item
     {
         $key = config('navigator.keys.children');
 
         $menu = collect([
-             $key => $this->process($this->menu, 10)
+             $key => $this->process($this->menu, 10, $config)
         ]);
 
         return new Item($menu);
     }
 
-    private function process($menu, $depth): Collection
+    private function process($menu, $depth, $config = []): Collection
     {
-        return $this->sortByOrder($menu)->map(function ($item) use ($depth) {
+        return $this->sortByOrder($menu)->map(function ($item) use ($depth, $config) {
 
-            $depth = $item->get(config('navigator.keys.depth')) ?? $depth;
+            $depth = $config['depth'] ?? ($item->get(config('navigator.keys.depth')) ?? $depth);
 
             if ($depth >= 0) {
 
@@ -78,9 +78,12 @@ class NavigationProcessor
         }
 
         if (Route::has($routeName)) {
+
             $item->put(config('navigator.keys.link'), route($routeName));
+
+            return true;
         }
-        return true;
+        return optional($item)->get(config('navigator.keys.link'), false);
     }
 
     private function processChildren($item, $depth)

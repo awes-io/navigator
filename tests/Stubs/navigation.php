@@ -4,14 +4,14 @@ return [
 
     'menu' => [
         [
-            'title' => 'Menu 1',
+            'name' => 'Menu 1',
             'link' => 'test',
             'route' => 'login',
             'order' => 2,
             'children' => 
             [
                 [
-                    'title' => 'Menu 2',
+                    'name' => 'Menu 2',
                     'link' => 'test',
                     'order' => 2,
                     'attr' => 
@@ -20,7 +20,7 @@ return [
                         'class' => 'some class'
                     ]
                 ],[
-                    'title' => 'Menu 3',
+                    'name' => 'Menu 3',
                     'link' => 'test 3',
                     'order' => 1,
                     'route' => 'test'
@@ -28,29 +28,29 @@ return [
             ]
         ],
         [
-            'title' => 'Menu 4',
+            'name' => 'Menu 4',
             'link' => 'test',
             'order' => 1,
             'depth' => 1,
             'children' => 
             [
                 [
-                    'title' => 'Menu 5',
+                    'name' => 'Menu 5',
                     'link' => 'test'
                 ],
                 [
-                    'title' => 'Menu 6',
+                    'name' => 'Menu 6',
                     'link' => 'test',
                     'route' => 'test',
                     'children' => 
                     [
                         [
-                            'title' => 'Menu 7',
+                            'name' => 'Menu 7',
                             'link' => 'test',
                             'route' => 'unknown',
                         ],
                         [
-                            'title' => 'Menu 8',
+                            'name' => 'Menu 8',
                             'link' => 'test',
                             'route' => 'register',
                         ]

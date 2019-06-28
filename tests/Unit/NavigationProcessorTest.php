@@ -41,10 +41,16 @@ class NavigationProcessorTest extends TestCase
     public function testSortsByOrder()
     {
         $order = config('navigator.keys.order');
+        $link = config('navigator.keys.link');
 
         $menu = (
             new NavigationProcessor(
-                collect([[$order => 2],[$order => 0],[$order => 1],[$order => 3]])->recursive()
+                collect([
+                    [$link => 'link', $order => 2],
+                    [$link => 'link', $order => 0],
+                    [$link => 'link', $order => 1],
+                    [$link => 'link', $order => 3]
+                ])->recursive()
             )
         )->build();
 
