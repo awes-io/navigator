@@ -73,9 +73,7 @@ class NavigationProcessor
     {
         $routeName = $this->getRouteName($item);
 
-        if (! $this->isAllowedRoute($routeName)) {
-            return false;
-        }
+        if (! $this->isAllowedRoute($routeName)) return false;
 
         if (Route::has($routeName)) {
 
@@ -83,7 +81,7 @@ class NavigationProcessor
 
             return true;
         }
-        return optional($item)->get(config('navigator.keys.link'), false);
+        return ! (bool) $routeName;
     }
 
     private function processChildren($item, $depth)
