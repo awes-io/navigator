@@ -89,8 +89,9 @@ class Item implements ItemContract, IteratorAggregate
 
     private function getPath()
     {
-        return trim(parse_url($this->link(), PHP_URL_PATH), '/') ?:
-            ($this->link() ? '/' : null);
+        $path = trim(parse_url($this->link(), PHP_URL_PATH), '/');
+
+        return $path ? $path . '*' : ($this->link() ? '/' : null);
     }
 
     private function find($item, $key, $value)
