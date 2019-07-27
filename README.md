@@ -1,9 +1,61 @@
-# Navigator
+<p align="center">
+    <a href="https://www.awes.io/?utm_source=github&utm_medium=repository" target="_blank" rel="noopener noreferrer">
+        <img width="100" src="https://static.awes.io/promo/Logo_sign_color.svg" alt="Awes.io logo">
+    </a>
+</p>
 
-[![Coverage report](http://gitlab.awescode.com/awes-io/navigator/badges/master/coverage.svg)](https://www.awes.io/)
-[![Build status](http://gitlab.awescode.com/awes-io/navigator/badges/master/build.svg)](https://www.awes.io/)
+<h1 align="center">Navigator</h1>
 
-Laravel package which can easily create a navigation menu of any complexity, with support for user permissions when displayed. Take a look at [contributing.md](contributing.md) to see a to do list.
+<p align="center">Laravel package that can easily create navigation menus of any complexity. With support for routing, permissions, sorting, rendering depth, active items marking and element searching.</p>
+
+<p align="center">
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://repo.pkgkit.com/4GBWO/awes-io/navigator/badges/master/coverage.svg" alt="Coverage report" >
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://www.pkgkit.com/4GBWO/awes-io/navigator/version.svg" alt="Last version" >
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://repo.pkgkit.com/4GBWO/awes-io/navigator/badges/master/build.svg" alt="Build status" >
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://www.pkgkit.com/4GBWO/awes-io/navigator/downloads.svg" alt="Downloads" >
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://img.shields.io/github/license/awes-io/navigator.svg" alt="License" />
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://www.pkgkit.com/4GBWO/awes-io/navigator/status.svg" alt="CDN Ready" /> 
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields" target="_blank">
+        <img src="https://static.pkgkit.com/badges/laravel.svg" alt="laravel" />
+    </a>
+    <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://img.shields.io/github/last-commit/awes-io/navigator.svg" alt="Last commit" />
+    </a>
+    <a href="https://github.com/awes-io/awes-io">
+        <img src="https://ga-beacon.appspot.com/UA-134431636-1/awes-io/navigator" alt="Analytics" />
+    </a>
+    <a href="https://www.pkgkit.com/?utm_source=github&amp;utm_medium=shields">
+        <img src="https://www.pkgkit.com/badges/hosted.svg" alt="Hosted by Package Kit" />
+    </a>
+    <a href="https://www.patreon.com/join/awesdotio">
+        <img src="https://static.pkgkit.com/badges/patreon.svg" alt="Patreon" />
+    </a>
+</p>
+
+##
+<p align="center">
+    <img src="https://static.awes.io/github/repository-cover.png" alt="Repository Laravel" />
+</p>
+
+
+## Table of Contents
+
+- <a href="#installation">Installation</a>
+- <a href="#configuration">Configuration</a>
+- <a href="#usage">Usage</a>
+- <a href="#testing">Testing</a>
 
 ## Installation
 
@@ -14,6 +66,60 @@ $ composer require awes-io/navigator
 ```
 
 The package will automatically register itself.
+
+## Configuration
+
+You can publish the config file with:
+
+```bash
+php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
+```
+
+You can rename any options keys, which are used to get respective data from the menu's config:
+
+```php
+// navigator.php config
+'keys' => [
+    'depth' => 'depth', // rendering depth
+    'order' => 'order', // ordering by parameter
+    'children' => 'children', // sub menu items
+    'route' => 'route', // route name
+    'link' => 'link', // item link url
+    'title' => 'name', // item title
+    'attr' => 'attr', // additional item attributes
+],
+```
+
+And use alternative menu settings for parsing and rendering:
+
+```php
+// navigator.php config
+'keys' => [
+    ...
+    'children' => 'other-children', // sub menu items
+    ...
+],
+
+// navigation.php
+'menu' => [
+    [
+        ...
+        'children' => [
+        ...
+        'other-children' => [
+        ...
+]
+
+Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
+```
+
+You can achieve same effect dynamically, via mappings mentioned above:
+
+```php
+$menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
+```
+
+Note that we now use global helper method `buildMenu()`.
 
 ## Usage
 
@@ -59,60 +165,6 @@ return [
 ```
 
 Second one is mappings for configuration parameters (described below), third is a callback, which will be applied to each menu item.
-
-## Configuration
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
-```
-
-You can rename any menu options keys:
-
-```php
-// navigator.php config
-'keys' => [
-    'depth' => 'depth', // depth of children quering
-    'order' => 'order', // ordering by parameter
-    'children' => 'children', // sub menu items
-    'route' => 'route', // route name
-    'link' => 'link', // item link url
-    'title' => 'title', // item title
-    'attr' => 'attr', // additional item attributes
-],
-```
-
-And use alternative menu settings for parsing and rendering:
-
-```php
-// navigator.php config
-'keys' => [
-    ...
-    'children' => 'other-children', // sub menu items
-    ...
-],
-
-// navigation.php
-'menu' => [
-    [
-        ...
-        'children' => [
-        ...
-        'other-children' => [
-        ...
-]
-
-Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
-```
-
-You can achieve same effect dynamically, via mappings mentioned above:
-
-```php
-$menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
-```
-
-Note that we now use global helper method `buildMenu()`.
 
 ### Some helpful methods are available
 
@@ -180,6 +232,8 @@ return view('view', compact('menu'));
 
 ## Testing
 
+The coverage of the package is <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields"><img src="https://repo.pkgkit.com/4GBWO/awes-io/navigator/badges/master/coverage.svg" alt="Coverage report"></a>.
+
 You can run the tests with:
 
 ```bash
@@ -189,10 +243,6 @@ composer test
 ## Contributing
 
 Please see [contributing.md](contributing.md) for details and a todolist.
-
-## Security
-
-If you discover any security related issues, please email :author_email instead of using the issue tracker.
 
 ## Credits
 
