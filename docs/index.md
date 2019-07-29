@@ -1,6 +1,5 @@
 # Navigator
-
-Laravel package which can easily create a navigation menu of any complexity, with support for user permissions when displayed.
+Laravel package that can easily create navigation menus of any complexity. With support for routing, permissions, sorting, rendering depth, active items marking and element searching.
 
 ## Installation
 
@@ -12,81 +11,36 @@ $ composer require awes-io/navigator
 
 The package will automatically register itself.
 
-## Usage
-
-```php
-use AwesIO\Navigator\Facades\Navigator;
-
-$menu = Navigator::buildMenu(config('navigation.menu'), [], function ($item) {
-    $item->put('meta', $item->get('title') . ' / ' . $item->get('link'));
-});
-```
-
-First parameter is menu configuration in form of array:
-
-```php
-// navigation.php
-return [
-    'menu' => [
-        [
-            'title' => 'Products', // menu item's title
-            'route' => 'products.index', // route name for url generation
-            'order' => 1, // parameter to determine the order
-            'depth' => 1, // depth for recursive generation of descendants
-            'children' => 
-            [
-                [
-                    'id' => 1, // custom id, overwrites auto-generated one
-                    'title' => 'Catalog',
-                    'link' => 'products/catalog', // explicit relative path for link url 
-                ],
-                [
-                    'title' => 'Support',
-                    'route' => 'products.support'
-                ]
-            ]
-        ],
-        [
-            'title' => 'Contact us',
-            'route' => 'contacts',
-            'order' => 2,
-        ],
-    ]
-];
-```
-
-Second one is mappings for configuration parameters (described below), third is a callback, which will be applied to each menu item.
-
 ## Configuration
 
-You can publish the config file with:
+You can publish the config file:
 
 ```bash
 php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
 ```
 
-You can rename any menu options keys:
+And rename any options keys, which are used to get respective data from the menu config:
 
 ```php
 // navigator.php config
 'keys' => [
-    'depth' => 'depth', // depth of children quering
+    'depth' => 'depth', // rendering depth
     'order' => 'order', // ordering by parameter
     'children' => 'children', // sub menu items
     'route' => 'route', // route name
     'link' => 'link', // item link url
-    'title' => 'title', // item title
+    'title' => 'name', // item title
     'attr' => 'attr', // additional item attributes
 ],
 ```
 
-And use alternative menu settings for parsing and rendering:
+As well as use alternative menu settings for parsing and rendering:
 
 ```php
 // navigator.php config
 'keys' => [
     ...
-    'children' => 'other-children', // sub menu items
+    'children' => 'other-children', // alternative sub menu items
     ...
 ],
 
@@ -103,24 +57,72 @@ And use alternative menu settings for parsing and rendering:
 Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
 ```
 
-You can achieve same effect dynamically, via mappings mentioned above:
+You can achieve the same effect dynamically, via mappings mentioned above:
 
 ```php
-$menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
+$menu = buildMenu(config('navigation.menu'), [], ['children' => 'other-children']);
 ```
 
-Note that we now use global helper method `buildMenu()`.
+Note that we now use the global helper method `buildMenu()`.
 
-### Some helpful methods are available
+## Usage
 
-Determine if node has any children and retrieve them:
+```php
+use AwesIO\Navigator\Facades\Navigator;
+
+$menu = Navigator::buildMenu(config('navigation.menu'), ['depth' => 2], [], function ($item) {
+    $item->put('meta', $item->get('title') . ' / ' . $item->get('link'));
+});
+
+// using helper, rendering depth set via config as a second parameter
+$menu = buildMenu(config('navigation.menu'), ['depth' => 2], [], function ($item) {});
+```
+
+The first parameter is the menu config in the form of an array:
+
+```php
+// navigation.php
+return [
+    'menu' => [
+        [
+            'title' => 'Products', // menu item's title
+            'route' => 'products.index', // route name for URL generation
+            'order' => 1, // parameter to determine the order
+            'depth' => 1, // depth for the recursive generation of descendants
+            'children' => 
+            [
+                [
+                    'id' => 1, // custom id which overwrites auto-generated one
+                    'title' => 'Catalog',
+                    'link' => 'products/catalog', // explicit relative path for link URL 
+                ],
+                [
+                    'title' => 'Support',
+                    'route' => 'products.support'
+                ]
+            ]
+        ],
+        [
+            'title' => 'Contact us',
+            'route' => 'contacts',
+            'order' => 2,
+        ],
+    ]
+];
+```
+
+Second is config, the third one is mappings for configuration parameters (described above), last is a callback, which will be applied to each menu item.
+
+### Some helpful methods
+
+Determine if the node has any children and retrieve them:
 
 ```php
 $menu->hasChildren();
 $menu->children();
 ```
 
-Get a link url for a node:
+Get a link URL for a node:
 
 ```php
 $menu->link();
@@ -145,9 +147,10 @@ Find a node by its id:
 $menu->findById($id);
 ```
 
-## Rendering example
+## Menu rendering example
 
 ```php
+// somewhere in a controller
 $menu = Navigator::buildMenu(config('navigation.menu'));
 return view('view', compact('menu'));
 
@@ -175,7 +178,26 @@ return view('view', compact('menu'));
 @endforeach
 ```
 
+## Permissions
+
+If the user is not authorized to access some of the menu routes, they'll be automatically hidden based on existing permissions:
+
+```php
+Route::group(['middleware' => ['can:manage users']], function () {
+    Route::get('/', 'RoleController@index')->name('admin.roles.index');
+});
+
+// will be excluded from the menu for non-admin users
+[
+    'name' => __('navigation.security'),
+    'icon' => 'twousers',
+    'route' => 'admin.roles.index',
+],
+```
+
 ## Testing
+
+The coverage of the package is <a href="https://www.awes.io/?utm_source=github&amp;utm_medium=shields"><img src="https://repo.pkgkit.com/4GBWO/awes-io/navigator/badges/master/coverage.svg" alt="Coverage report"></a>.
 
 You can run the tests with:
 
