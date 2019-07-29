@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://www.awes.io/?utm_source=github&utm_medium=repository" target="_blank" rel="noopener noreferrer">
+    <a href="https://www.awes.io/?utm_source=github&utm_medium=navigator" target="_blank" rel="noopener noreferrer">
         <img width="100" src="https://static.awes.io/promo/Logo_sign_color.svg" alt="Awes.io logo">
     </a>
 </p>
@@ -46,7 +46,7 @@
 
 ##
 <p align="center">
-    <img src="https://static.awes.io/github/repository-cover.png" alt="Repository Laravel" />
+    <img src="https://static.awes.io/github/navigator-cover_3.png" alt="Navigator Laravel" />
 </p>
 
 
@@ -96,7 +96,7 @@ And use alternative menu settings for parsing and rendering:
 // navigator.php config
 'keys' => [
     ...
-    'children' => 'other-children', // sub menu items
+    'children' => 'other-children', // alternative sub menu items
     ...
 ],
 
@@ -113,25 +113,28 @@ And use alternative menu settings for parsing and rendering:
 Navigator::buildMenu(config('navigation.menu')); // will now parse menu using 'other-children'
 ```
 
-You can achieve same effect dynamically, via mappings mentioned above:
+You can achieve the same effect dynamically, via mappings mentioned above:
 
 ```php
-$menu = buildMenu(config('navigation.menu'), ['children' => 'other-children']);
+$menu = buildMenu(config('navigation.menu'), [], ['children' => 'other-children']);
 ```
 
-Note that we now use global helper method `buildMenu()`.
+Note that we now use the global helper method `buildMenu()`.
 
 ## Usage
 
 ```php
 use AwesIO\Navigator\Facades\Navigator;
 
-$menu = Navigator::buildMenu(config('navigation.menu'), [], function ($item) {
+$menu = Navigator::buildMenu(config('navigation.menu'), ['depth' => 2], [], function ($item) {
     $item->put('meta', $item->get('title') . ' / ' . $item->get('link'));
 });
+
+// using helper, rendering depth set via config as a second parameter
+$menu = buildMenu(config('navigation.menu'), ['depth' => 2], [], function ($item) {});
 ```
 
-First parameter is menu configuration in form of array:
+The first parameter is the menu config in the form of an array:
 
 ```php
 // navigation.php
@@ -139,15 +142,15 @@ return [
     'menu' => [
         [
             'title' => 'Products', // menu item's title
-            'route' => 'products.index', // route name for url generation
+            'route' => 'products.index', // route name for URL generation
             'order' => 1, // parameter to determine the order
-            'depth' => 1, // depth for recursive generation of descendants
+            'depth' => 1, // depth for the recursive generation of descendants
             'children' => 
             [
                 [
-                    'id' => 1, // custom id, overwrites auto-generated one
+                    'id' => 1, // custom id which overwrites auto-generated one
                     'title' => 'Catalog',
-                    'link' => 'products/catalog', // explicit relative path for link url 
+                    'link' => 'products/catalog', // explicit relative path for link URL 
                 ],
                 [
                     'title' => 'Support',
@@ -164,18 +167,18 @@ return [
 ];
 ```
 
-Second one is mappings for configuration parameters (described below), third is a callback, which will be applied to each menu item.
+Second is config, the third one is mappings for configuration parameters (described above), last is a callback, which will be applied to each menu item.
 
-### Some helpful methods are available
+### Some helpful methods
 
-Determine if node has any children and retrieve them:
+Determine if the node has any children and retrieve them:
 
 ```php
 $menu->hasChildren();
 $menu->children();
 ```
 
-Get a link url for a node:
+Get a link URL for a node:
 
 ```php
 $menu->link();
@@ -200,9 +203,10 @@ Find a node by its id:
 $menu->findById($id);
 ```
 
-## Rendering example
+## Menu rendering example
 
 ```php
+// somewhere in a controller
 $menu = Navigator::buildMenu(config('navigation.menu'));
 return view('view', compact('menu'));
 
@@ -228,6 +232,23 @@ return view('view', compact('menu'));
     @endif
   </ul>
 @endforeach
+```
+
+## User permissions
+
+If the user is not authorized to access some of the menu routes, they'll be automatically hidden based on existing permissions:
+
+```php
+Route::group(['middleware' => ['can:manage users']], function () {
+    Route::get('/', 'RoleController@index')->name('admin.roles.index');
+});
+
+// will be excluded from the menu for non-admin users
+[
+    'name' => __('navigation.security'),
+    'icon' => 'twousers',
+    'route' => 'admin.roles.index',
+],
 ```
 
 ## Testing
