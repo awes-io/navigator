@@ -55,6 +55,7 @@
 - <a href="#installation">Installation</a>
 - <a href="#configuration">Configuration</a>
 - <a href="#usage">Usage</a>
+- <a href="#permissions">Permissions</a>
 - <a href="#testing">Testing</a>
 
 ## Installation
@@ -69,13 +70,13 @@ The package will automatically register itself.
 
 ## Configuration
 
-You can publish the config file with:
+You can publish the config file:
 
 ```bash
 php artisan vendor:publish --provider="AwesIO\Navigator\NavigatorServiceProvider" --tag="config"
 ```
 
-You can rename any options keys, which are used to get respective data from the menu's config:
+And rename any options keys, which are used to get respective data from the menu config:
 
 ```php
 // navigator.php config
@@ -90,7 +91,7 @@ You can rename any options keys, which are used to get respective data from the 
 ],
 ```
 
-And use alternative menu settings for parsing and rendering:
+As well as use alternative menu settings for parsing and rendering:
 
 ```php
 // navigator.php config
@@ -234,7 +235,7 @@ return view('view', compact('menu'));
 @endforeach
 ```
 
-## User permissions
+## Permissions
 
 If the user is not authorized to access some of the menu routes, they'll be automatically hidden based on existing permissions:
 
