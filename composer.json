@@ -1,8 +1,8 @@
 {
     "name": "awes-io/navigator",
-    "description": ":description",
+    "description": "🧿 Build navigation or menu for Laravel and Awes.io. Unlimit complexity and depth of the menu.",
     "type": "library",
-    "license": "GPL-3.0-only",
+    "license": "MIT",
 	"authors": [
 		{
 			"name": "Awescode GmbH",
@@ -25,7 +25,7 @@
 		"email": "support@awescode.de"
 	},
 	"homepage": "https://github.com/awes-io/navigator",
-	"keywords": ["Laravel", "Navigator"],
+	"keywords": ["laravel", "navigator", "navigation", "menu", "laravel-menu", "laravel-navigation", "awes-io"],
     "require": {
         "illuminate/support": "~5"
     },
