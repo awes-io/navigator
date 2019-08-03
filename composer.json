@@ -57,5 +57,8 @@
                 "Navigator": "AwesIO\\Navigator\\Facades\\Navigator"
             }
         }
+    },
+    "config": {
+        "discard-changes": true
     }
 }
