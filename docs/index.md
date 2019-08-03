@@ -11,6 +11,65 @@ $ composer require awes-io/navigator
 
 The package will automatically register itself.
 
+## Quickstart
+
+Let's firstly create basic navigation, which covers most of the use cases.
+
+Create navigation configuration file:
+
+```php
+// config/navigation.php
+
+return [
+    [
+        'name' => 'Projects',
+        'route' => 'projects.index', // route must exist or item will be hidden
+        'children' => 
+        [
+            [
+                'name' => 'New projects',
+                'link' => '/projects/new', // you can use direct links
+            ]
+        ]
+    ],
+    [
+        'name' => 'Packages',
+        'route' => 'packages.index',
+    ]
+];
+```
+
+Next, let's build our menu somewhere in the controller and pass it to a view:
+
+```php
+$menu = buildMenu(config('navigation'));
+return view('menu', compact('menu'));
+```
+
+And finally implement basic rendering logic:
+
+```php
+// menu.blade.php
+@foreach($menu as $item)
+  <ul>
+    <li>
+        @if($item->link())
+            <a href="{{$item->link()}}">
+              @if($item->isActive()) ACTIVE @endif {{$item->name}}
+            </a>
+        @else
+            {{$item->name}}
+        @endif
+    </li>
+    @if($item->hasChildren())
+       @include('menu', ['menu' => $item->children()])
+    @endif
+  </ul>
+@endforeach
+```
+
+That's all that simple!
+
 ## Configuration
 
 You can publish the config file:
